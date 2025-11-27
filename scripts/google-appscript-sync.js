@@ -40,45 +40,35 @@ function syncSupabaseToSheet() {
 
   // Friendly headers for the client (mapped from the view)
   const headers = [
-    'Creator ID',
+    'Creator Profile URL',
     'Creator Name',
-    'Creator Slug',
     'Email',
-    'Email Source URL',
-    'Has Contact Form',
+    'Email Source',
     'Contact Form URL',
-    'Latest Project Name',
-    'Latest Project Slug',
-    'Project Country',
-    'Project Blurb',
+    'Has Contact Form',
+    'Project Names',
+    'Project URLs',
+    'Project Countries',
+    'Project Blurbs',
     'Creator Websites',
   ];
 
   const values = [headers].concat(
     data.map(row => [
-      row.creator_id ?? '',
+      // Creator Profile URL with slug fallback to id
+      row.creator_slug
+        ? `https://www.kickstarter.com/profile/${row.creator_slug}`
+        : (row.creator_id ? `https://www.kickstarter.com/profile/${row.creator_id}` : ''),
       row.creator_name ?? '',
-      row.creator_slug ?? '',
       row.email ?? '',
       row.email_source_url ?? '',
-      row.has_contact_form ?? false,
       row.contact_form_url ?? '',
-      row.latest_project_name ?? '',
-      row.latest_project_slug ?? '',
-      row.project_country ?? '',
-      row.project_blurb ?? '',
-      Array.isArray(row.creator_websites)
-        ? row.creator_websites
-            .map(site => {
-              if (site && typeof site === 'object') {
-                return site.url || '';
-              }
-              if (typeof site === 'string') return site;
-              return '';
-            })
-            .filter(Boolean)
-            .join('\n')
-        : '',
+      row.has_contact_form ?? false,
+      row.project_names ?? '',
+      row.project_urls ?? '',
+      row.project_countries ?? '',
+      row.project_blurbs ?? '',
+      row.creator_websites ?? '',
     ])
   );
 
