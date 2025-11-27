@@ -7,7 +7,6 @@ select
   c.id as creator_id,
   c.name as creator_name,
   c.slug as creator_slug,
-  c.country as creator_country,
   coalesce(co.email, '') as email,
   coalesce(co.contact_status, 'not_contacted') as contact_status,
   coalesce(co.contact_form_url, '') as contact_form_url,
@@ -16,7 +15,6 @@ select
   p.name as latest_project_name,
   p.slug as latest_project_slug,
   p.country as project_country,
-  p.parent_projectid as project_parent_id,
   p.created_at_ks as project_created_at
 from creators c
 left join creator_outreach co on co.creator_id = c.id
