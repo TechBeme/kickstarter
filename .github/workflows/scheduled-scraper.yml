@@ -31,32 +31,36 @@ jobs:
           PYTHONPATH: src
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          FETCH_TIMEOUT: ${{ vars.FETCH_TIMEOUT || '20' }}
-          ENRICH_TIMEOUT: ${{ vars.ENRICH_TIMEOUT || '30' }}
-          FETCH_MAX_RETRIES: ${{ vars.FETCH_MAX_RETRIES || '10' }}
-          ENRICH_MAX_RETRIES: ${{ vars.ENRICH_MAX_RETRIES || '5' }}
-          FETCH_RETRY_WAIT: ${{ vars.FETCH_RETRY_WAIT || '5.0' }}
-          ENRICH_RETRY_WAIT: ${{ vars.ENRICH_RETRY_WAIT || '60.0' }}
-          USE_PROXY: ${{ vars.USE_PROXY || 'false' }}
-          PROXY_URL: ${{ vars.PROXY_URL || '' }}
-          CONTACTS_WORKERS: ${{ vars.CONTACTS_WORKERS || '100' }}
-          CONTACTS_BATCH_SIZE: ${{ vars.CONTACTS_BATCH_SIZE || '20' }}
-          CONTACTS_DAYS_FILTER: ${{ vars.CONTACTS_DAYS_FILTER || '120' }}
+          # Optional overrides (leave empty to use code defaults)
+          FETCH_TIMEOUT: ${{ vars.FETCH_TIMEOUT || '' }}
+          ENRICH_TIMEOUT: ${{ vars.ENRICH_TIMEOUT || '' }}
+          FETCH_MAX_RETRIES: ${{ vars.FETCH_MAX_RETRIES || '' }}
+          ENRICH_MAX_RETRIES: ${{ vars.ENRICH_MAX_RETRIES || '' }}
+          FETCH_RETRY_WAIT: ${{ vars.FETCH_RETRY_WAIT || '' }}
+          ENRICH_RETRY_WAIT: ${{ vars.ENRICH_RETRY_WAIT || '' }}
+          USE_PROXY: ${{ vars.USE_PROXY || '' }}
+          PROXY_URL: ${{ secrets.PROXY_URL || vars.PROXY_URL || '' }}
+          CONTACTS_WORKERS: ${{ vars.CONTACTS_WORKERS || '' }}
+          CONTACTS_BATCH_SIZE: ${{ vars.CONTACTS_BATCH_SIZE || '' }}
+          CONTACTS_DAYS_FILTER: ${{ vars.CONTACTS_DAYS_FILTER || '' }}
         run: |
           CMD="python -m kickstarter_tools.run"
-          CMD="$CMD --fetch-timeout $FETCH_TIMEOUT"
-          CMD="$CMD --enrich-timeout $ENRICH_TIMEOUT"
-          CMD="$CMD --fetch-max-retries $FETCH_MAX_RETRIES"
-          CMD="$CMD --enrich-max-retries $ENRICH_MAX_RETRIES"
-          CMD="$CMD --fetch-retry-wait $FETCH_RETRY_WAIT"
-          CMD="$CMD --enrich-retry-wait $ENRICH_RETRY_WAIT"
-          CMD="$CMD --contacts-workers $CONTACTS_WORKERS"
-          CMD="$CMD --contacts-batch-size $CONTACTS_BATCH_SIZE"
-          CMD="$CMD --days-filter $CONTACTS_DAYS_FILTER"
           
+          # Only override defaults when a variable is set
+          if [ -n "$FETCH_TIMEOUT" ]; then CMD="$CMD --fetch-timeout $FETCH_TIMEOUT"; fi
+          if [ -n "$ENRICH_TIMEOUT" ]; then CMD="$CMD --enrich-timeout $ENRICH_TIMEOUT"; fi
+          if [ -n "$FETCH_MAX_RETRIES" ]; then CMD="$CMD --fetch-max-retries $FETCH_MAX_RETRIES"; fi
+          if [ -n "$ENRICH_MAX_RETRIES" ]; then CMD="$CMD --enrich-max-retries $ENRICH_MAX_RETRIES"; fi
+          if [ -n "$FETCH_RETRY_WAIT" ]; then CMD="$CMD --fetch-retry-wait $FETCH_RETRY_WAIT"; fi
+          if [ -n "$ENRICH_RETRY_WAIT" ]; then CMD="$CMD --enrich-retry-wait $ENRICH_RETRY_WAIT"; fi
+          if [ -n "$CONTACTS_WORKERS" ]; then CMD="$CMD --contacts-workers $CONTACTS_WORKERS"; fi
+          if [ -n "$CONTACTS_BATCH_SIZE" ]; then CMD="$CMD --contacts-batch-size $CONTACTS_BATCH_SIZE"; fi
+          if [ -n "$CONTACTS_DAYS_FILTER" ]; then CMD="$CMD --days-filter $CONTACTS_DAYS_FILTER"; fi
+
+          # Proxy: only force a mode if explicitly set
           if [ "$USE_PROXY" = "true" ]; then
             CMD="$CMD --use-proxy"
-          else
+          elif [ "$USE_PROXY" = "false" ]; then
             CMD="$CMD --disable-proxy"
           fi
           
