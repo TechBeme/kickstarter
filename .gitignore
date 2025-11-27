@@ -1,0 +1,59 @@
+# Environment
+/venv/
+/env/
+/.venv/
+.env
+.env.local
+.env.development.local
+.env.production.local
+.env.test.local
+/.env.kickstarter
+# Keep the example env file tracked
+!.env.example
+.env.test.local
+/.env.kickstarter
+
+# Ignore heavy external docs
+/docs/firecrawl-docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Logs
+/logs/
+*.log
+
+# Data files (local/sensitive)
+/accounts.json
+/blocked_domains.json
+/creators_export.xlsx
+/projects.json
+/projects_enriched.json
+
+# Excel backups
+*.xlsx~
+*_backup.xlsx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build caches
+*.tsbuildinfo
+
+# Frontend (Next.js)
+/website/.next/
+/website/node_modules/
+/website/out/
+
+/docs/
