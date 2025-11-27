@@ -63,6 +63,3 @@ jobs:
           echo "🚀 Running pipeline: $CMD"
           eval $CMD
           echo "✅ Kickstarter fetch, Supabase sync, and Firecrawl contacts completed"
-      
-      # Optional: skip Excel export to reduce time/storage
-      # Remove this job step entirely; contacts and sync are the focus now.

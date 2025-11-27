@@ -69,6 +69,8 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument("--limit-contacts", type=int, help="Limit number of creators to process for contact extraction.")
     parser.add_argument("--dry-run-contacts", action="store_true", help="Do not persist contact extraction results.")
     parser.add_argument("--skip-contacts", action="store_true", help="Skip contact extraction step.")
+    parser.add_argument("--contacts-workers", type=int, default=100, help="Parallel workers for Firecrawl map/scrape.")
+    parser.add_argument("--contacts-batch-size", type=int, default=20, help="Persist contact results every N creators.")
     parser.add_argument("--export-xlsx", action="store_true", help="Export creators XLSX from enriched data (optional artifact).")
     parser.add_argument("--export-path", type=Path, default=Path("creators_export.xlsx"), help="Path for optional XLSX export.")
     parser.add_argument("--skip-export", action="store_true", help="Ignore XLSX export (compatibility flag).")
@@ -124,6 +126,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
             contact_args.append("--dry-run-contacts")
         if args.skip_contacts:
             contact_args.append("--skip-contacts")
+        if args.contacts_workers:
+            contact_args.extend(["--contacts-workers", str(args.contacts_workers)])
+        if args.contacts_batch_size:
+            contact_args.extend(["--contacts-batch-size", str(args.contacts_batch_size)])
         return run_contacts(contact_args)
 
     # Single rotating proxy (env wins unless disabled)
@@ -319,6 +325,10 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
                     contact_args.extend(["--limit-contacts", str(args.limit_contacts)])
                 if args.dry_run_contacts:
                     contact_args.append("--dry-run-contacts")
+                if args.contacts_workers:
+                    contact_args.extend(["--contacts-workers", str(args.contacts_workers)])
+                if args.contacts_batch_size:
+                    contact_args.extend(["--contacts-batch-size", str(args.contacts_batch_size)])
                 # call runner; it will use supabase client internally
                 run_contacts(contact_args)
             except Exception as e:  # noqa: BLE001
