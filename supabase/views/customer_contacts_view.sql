@@ -8,14 +8,14 @@ select
   c.name as creator_name,
   c.slug as creator_slug,
   coalesce(co.email, '') as email,
-  coalesce(co.contact_status, 'not_contacted') as contact_status,
+  coalesce(co.email_source_url, '') as email_source_url,
   coalesce(co.contact_form_url, '') as contact_form_url,
   coalesce(co.has_contact_form, false) as has_contact_form,
-  coalesce(co.last_contact_check_at, co.updated_at) as last_contact_check_at,
   p.name as latest_project_name,
   p.slug as latest_project_slug,
-  p.country as project_country,
-  p.created_at_ks as project_created_at
+  p.country_displayable_name as project_country,
+  p.blurb as project_blurb,
+  c.websites as creator_websites
 from creators c
 left join creator_outreach co on co.creator_id = c.id
 left join lateral (

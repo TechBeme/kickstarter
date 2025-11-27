@@ -38,8 +38,49 @@ function syncSupabaseToSheet() {
     return;
   }
 
-  const headers = Object.keys(data[0]);
-  const values = [headers].concat(data.map(row => headers.map(h => row[h] ?? '')));
+  // Friendly headers for the client (mapped from the view)
+  const headers = [
+    'Creator ID',
+    'Creator Name',
+    'Creator Slug',
+    'Email',
+    'Email Source URL',
+    'Has Contact Form',
+    'Contact Form URL',
+    'Latest Project Name',
+    'Latest Project Slug',
+    'Project Country',
+    'Project Blurb',
+    'Creator Websites',
+  ];
+
+  const values = [headers].concat(
+    data.map(row => [
+      row.creator_id ?? '',
+      row.creator_name ?? '',
+      row.creator_slug ?? '',
+      row.email ?? '',
+      row.email_source_url ?? '',
+      row.has_contact_form ?? false,
+      row.contact_form_url ?? '',
+      row.latest_project_name ?? '',
+      row.latest_project_slug ?? '',
+      row.project_country ?? '',
+      row.project_blurb ?? '',
+      Array.isArray(row.creator_websites)
+        ? row.creator_websites
+            .map(site => {
+              if (site && typeof site === 'object') {
+                return site.url || '';
+              }
+              if (typeof site === 'string') return site;
+              return '';
+            })
+            .filter(Boolean)
+            .join('\n')
+        : '',
+    ])
+  );
 
   const ss = SpreadsheetApp.getActive();
   const sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
