@@ -40,6 +40,8 @@ left join lateral (
     from jsonb_array_elements(c.websites) as site
     where site->>'url' is not null and site->>'url' <> ''
   ) w
-) ws on true;
+) ws on true
+where co.contact_status = 'completed'
+  and (co.email is not null and co.email <> '' or coalesce(co.has_contact_form, false) = true);
 
 comment on view public.customer_contacts_view is 'Client-facing view with non-sensitive creator/contact fields.';
