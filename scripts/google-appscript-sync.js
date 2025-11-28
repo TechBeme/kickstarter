@@ -40,42 +40,78 @@ function syncSupabaseToSheet() {
 
   // Friendly headers for the client (mapped from the view)
   const headers = [
-    'Creator Profile URL',
     'Creator Name',
     'Email',
     'Email Source',
-    'Contact Form URL',
     'Has Contact Form',
+    'Contact Form URL',
+    'Creator Websites',
+    'Creator Profile URL',
     'Project Names',
     'Project URLs',
     'Project Countries',
-    'Project Blurbs',
-    'Creator Websites',
+    'Project Descriptions',
   ];
 
-  const values = [headers].concat(
-    data.map(row => [
-      // Creator Profile URL with slug fallback to id
-      row.creator_slug
-        ? `https://www.kickstarter.com/profile/${row.creator_slug}`
-        : (row.creator_id ? `https://www.kickstarter.com/profile/${row.creator_id}` : ''),
-      row.creator_name ?? '',
-      row.email ?? '',
-      row.email_source_url ?? '',
-      row.contact_form_url ?? '',
-      row.has_contact_form ?? false,
-      row.project_names ?? '',
-      row.project_urls ?? '',
-      row.project_countries ?? '',
-      row.project_blurbs ?? '',
-      row.creator_websites ?? '',
-    ])
-  );
+  const newRows = data.map(row => [
+    row.creator_name ?? '',
+    row.email ?? '',
+    row.email_source_url ?? '',
+    row.has_contact_form ?? false,
+    row.contact_form_url ?? '',
+    row.creator_websites ?? '',
+    // Creator Profile URL with slug fallback to id
+    row.creator_slug
+      ? `https://www.kickstarter.com/profile/${row.creator_slug}`
+      : (row.creator_id ? `https://www.kickstarter.com/profile/${row.creator_id}` : ''),
+    row.project_names ?? '',
+    row.project_urls ?? '',
+    row.project_countries ?? '',
+    row.project_blurbs ?? '',
+  ]);
 
   const ss = SpreadsheetApp.getActive();
   const sheet = ss.getSheetByName(SHEET_NAME) || ss.insertSheet(SHEET_NAME);
-  sheet.clearContents();
-  sheet.getRange(1, 1, values.length, headers.length).setValues(values);
+  
+  // Ensure headers exist (row 1)
+  const headerRange = sheet.getRange(1, 1, 1, headers.length);
+  const existingHeader = headerRange.getValues()[0];
+  const headerMissing = existingHeader.every(v => v === '');
+  if (headerMissing || headers.some((h, i) => existingHeader[i] !== h)) {
+    headerRange.setValues([headers]);
+  }
+
+  // Column index map
+  const colIdx = {};
+  headers.forEach((h, i) => { colIdx[h] = i; });
+
+  // Merge key: Creator Profile URL
+  const keyCol = colIdx['Creator Profile URL'];
+  const existingKeys = new Set();
+
+  // Read existing keys only (more robust than getLastColumn)
+  const usedRows = sheet.getLastRow() - 1;
+  if (usedRows > 0) {
+    const keyRange = sheet.getRange(2, keyCol + 1, usedRows, 1).getValues();
+    keyRange.forEach(([val]) => {
+      const key = (val || '').toString().trim();
+      if (key) existingKeys.add(key);
+    });
+  }
+
+  // Append only new rows
+  const rowsToAppend = newRows.filter(r => {
+    const key = (r[keyCol] || '').toString().trim();
+    return key && !existingKeys.has(key);
+  });
+
+  if (!rowsToAppend.length) {
+    Logger.log('No new rows to append.');
+    return;
+  }
+
+  // Append rows (one per appendRow to avoid column shift issues)
+  rowsToAppend.forEach(r => sheet.appendRow(r));
 }
 
 // Run once to create an hourly trigger (adjust in Triggers UI if needed)
