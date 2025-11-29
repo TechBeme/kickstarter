@@ -2,7 +2,7 @@ name: Scraper with Supabase Sync
 
 on:
   schedule:
-    - cron: '0 * * * *'  # Every hour
+    - cron: '0 0 * * *'  # Daily at 00:00 UTC
   workflow_dispatch:
 
 jobs:

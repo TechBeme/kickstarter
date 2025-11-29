@@ -114,10 +114,10 @@ function syncSupabaseToSheet() {
   rowsToAppend.forEach(r => sheet.appendRow(r));
 }
 
-// Run once to create an hourly trigger (adjust in Triggers UI if needed)
+// Run once to create a daily trigger (adjust in Triggers UI if needed)
 function createTrigger() {
   ScriptApp.newTrigger('syncSupabaseToSheet')
     .timeBased()
-    .everyHours(1)
+    .everyDays(1)
     .create();
 }
