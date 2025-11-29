@@ -119,5 +119,6 @@ function createTrigger() {
   ScriptApp.newTrigger('syncSupabaseToSheet')
     .timeBased()
     .everyDays(1)
+    .atHour(3) // 03:00 UTC (ensure project timezone is set to UTC)
     .create();
 }
