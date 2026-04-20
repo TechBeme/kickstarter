@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ProjectWithCreator } from '@/lib/types'
 import { ProjectGrid } from '@/components/projects/project-grid'
 import { ProjectTable } from '@/components/projects/project-table'
@@ -10,7 +10,7 @@ import { LayoutGrid, Table, Download, Loader2 } from 'lucide-react'
 import { exportToExcel, formatCurrencyForExcel, formatDateForExcel } from '@/lib/utils/excel-export'
 import { ExportDialog } from '@/components/ui/export-dialog'
 
-const PAGE_SIZE = 50
+const PAGE_SIZE = 24
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<ProjectWithCreator[]>([])
@@ -50,6 +50,7 @@ export default function ProjectsPage() {
     hasOtherWebsite: null,
     outreachStatus: null
   })
+  const [debouncedFilters, setDebouncedFilters] = useState<ProjectFilters>(filters)
 
   const [countries, setCountries] = useState<string[]>([])
   const [categories, setCategories] = useState<string[]>([])
@@ -58,6 +59,12 @@ export default function ProjectsPage() {
   useEffect(() => {
     loadInitialData()
   }, [])
+
+  // Prevent expensive API calls on every keystroke.
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebouncedFilters(filters), 300)
+    return () => clearTimeout(timeout)
+  }, [filters])
 
   // Reset and reload when filters change
   useEffect(() => {
@@ -68,7 +75,7 @@ export default function ProjectsPage() {
       setHasMore(true)
       loadProjects(0, true, true) // Pass true to replace current projects
     }
-  }, [filters])
+  }, [debouncedFilters])
 
   // Infinite scroll observer
   useEffect(() => {
@@ -88,62 +95,85 @@ export default function ProjectsPage() {
     return () => observer.disconnect()
   }, [hasMore, loadingMore, loading, page])
 
+  function buildProjectsParams(
+    limit: number,
+    offset: number,
+    includeTotal: boolean,
+    sourceFilters: ProjectFilters = debouncedFilters
+  ) {
+    const params = new URLSearchParams({
+      limit: limit.toString(),
+      offset: offset.toString(),
+      includeTotal: includeTotal ? 'true' : 'false'
+    })
+
+    if (sourceFilters.search) params.append('search', sourceFilters.search)
+    if (sourceFilters.state) params.append('state', sourceFilters.state)
+    if (sourceFilters.country) params.append('country', sourceFilters.country)
+    if (sourceFilters.category) params.append('category', sourceFilters.category)
+    if (sourceFilters.minGoal !== null) params.append('minGoal', sourceFilters.minGoal.toString())
+    if (sourceFilters.maxGoal !== null) params.append('maxGoal', sourceFilters.maxGoal.toString())
+    if (sourceFilters.minPercent !== null) params.append('minPercent', sourceFilters.minPercent.toString())
+    if (sourceFilters.staffPick !== null) params.append('staffPick', sourceFilters.staffPick.toString())
+    if (sourceFilters.outreachStatus) params.append('outreachStatus', sourceFilters.outreachStatus)
+    if (sourceFilters.hasInstagram) params.append('hasInstagram', 'true')
+    if (sourceFilters.hasFacebook) params.append('hasFacebook', 'true')
+    if (sourceFilters.hasTwitter) params.append('hasTwitter', 'true')
+    if (sourceFilters.hasYoutube) params.append('hasYoutube', 'true')
+    if (sourceFilters.hasTiktok) params.append('hasTiktok', 'true')
+    if (sourceFilters.hasLinkedin) params.append('hasLinkedin', 'true')
+    if (sourceFilters.hasPatreon) params.append('hasPatreon', 'true')
+    if (sourceFilters.hasDiscord) params.append('hasDiscord', 'true')
+    if (sourceFilters.hasTwitch) params.append('hasTwitch', 'true')
+    if (sourceFilters.hasBluesky) params.append('hasBluesky', 'true')
+    if (sourceFilters.hasOtherWebsite) params.append('hasOtherWebsite', 'true')
+
+    return params
+  }
+
   async function loadInitialData() {
     setLoading(true)
-    try {
-      // Fetch metadata from API
-      const metaResponse = await fetch('/api/projects/metadata')
 
-      if (metaResponse.ok) {
+    const metadataPromise = (async () => {
+      try {
+        const metaResponse = await fetch('/api/projects/metadata')
+        if (!metaResponse.ok) return
+
         const metadata = await metaResponse.json()
         setCountries(metadata.countries || [])
         setCategories(metadata.categories || [])
+      } catch (error) {
+        console.error('Error loading metadata:', error)
       }
+    })()
 
-      // Load first page of projects
-      await loadProjects(0, true)
+    try {
+      // Prioritize first project page so users see content as early as possible.
+      await loadProjects(0, true, true, true)
       initialLoadDone.current = true
-      setLoading(false) // Initial load complete
     } catch (error) {
-      console.error('Error loading initial data:', error)
-      setLoading(false)
+      console.error('Error loading initial projects:', error)
       initialLoadDone.current = true
+    } finally {
+      setLoading(false)
+      // Keep metadata loading in parallel without blocking initial rendering.
+      await metadataPromise
     }
   }
 
-  async function loadProjects(pageNum: number, isNewFilter = false, replaceProjects = false) {
+  async function loadProjects(
+    pageNum: number,
+    isNewFilter = false,
+    replaceProjects = false,
+    includeTotal = true
+  ) {
     // Always use loadingMore for better UX - keeps UI stable
     setLoadingMore(true)
 
     try {
       const offset = pageNum * PAGE_SIZE
 
-      // Build query params
-      const params = new URLSearchParams({
-        limit: PAGE_SIZE.toString(),
-        offset: offset.toString()
-      })
-
-      if (filters.search) params.append('search', filters.search)
-      if (filters.state) params.append('state', filters.state)
-      if (filters.country) params.append('country', filters.country)
-      if (filters.category) params.append('category', filters.category)
-      if (filters.minGoal !== null) params.append('minGoal', filters.minGoal.toString())
-      if (filters.maxGoal !== null) params.append('maxGoal', filters.maxGoal.toString())
-      if (filters.minPercent !== null) params.append('minPercent', filters.minPercent.toString())
-      if (filters.staffPick !== null) params.append('staffPick', filters.staffPick.toString())
-      if (filters.outreachStatus) params.append('outreachStatus', filters.outreachStatus)
-      if (filters.hasInstagram) params.append('hasInstagram', 'true')
-      if (filters.hasFacebook) params.append('hasFacebook', 'true')
-      if (filters.hasTwitter) params.append('hasTwitter', 'true')
-      if (filters.hasYoutube) params.append('hasYoutube', 'true')
-      if (filters.hasTiktok) params.append('hasTiktok', 'true')
-      if (filters.hasLinkedin) params.append('hasLinkedin', 'true')
-      if (filters.hasPatreon) params.append('hasPatreon', 'true')
-      if (filters.hasDiscord) params.append('hasDiscord', 'true')
-      if (filters.hasTwitch) params.append('hasTwitch', 'true')
-      if (filters.hasBluesky) params.append('hasBluesky', 'true')
-      if (filters.hasOtherWebsite) params.append('hasOtherWebsite', 'true')
+      const params = buildProjectsParams(PAGE_SIZE, offset, includeTotal)
 
       const response = await fetch(`/api/projects?${params.toString()}`)
 
@@ -155,15 +185,19 @@ export default function ProjectsPage() {
 
       if (!data || data.length === 0) {
         setHasMore(false)
-        setTotalCount(0)
-        if (isNewFilter) {
+        if (includeTotal && isNewFilter) {
+          setTotalCount(0)
+        }
+        if (replaceProjects || isNewFilter) {
           setProjects([])
         }
         return
       }
 
-      // Set total count
-      setTotalCount(total_count || 0)
+      // Keep the existing total on follow-up pages to avoid unnecessary recomputation.
+      if (typeof total_count === 'number') {
+        setTotalCount(total_count)
+      }
 
       // Transform API response to ProjectWithCreator format
       const projectsData: ProjectWithCreator[] = data.map((row: any) => ({
@@ -221,11 +255,11 @@ export default function ProjectsPage() {
     }
   }
 
-  const loadMore = useCallback(() => {
+  const loadMore = () => {
     const nextPage = page + 1
     setPage(nextPage)
-    loadProjects(nextPage, false)
-  }, [page, filters])
+    loadProjects(nextPage, false, false, false)
+  }
 
   const handleStatusChange = (projectId: number, creatorId: number, newStatus: string) => {
     // Update local state only - don't reload from server
@@ -258,31 +292,7 @@ export default function ProjectsPage() {
 
     try {
       // Fetch ALL projects with current filters (no pagination)
-      const params = new URLSearchParams({
-        limit: '999999', // Get all results
-        offset: '0'
-      })
-
-      if (filters.search) params.append('search', filters.search)
-      if (filters.state) params.append('state', filters.state)
-      if (filters.country) params.append('country', filters.country)
-      if (filters.category) params.append('category', filters.category)
-      if (filters.minGoal !== null) params.append('minGoal', filters.minGoal.toString())
-      if (filters.maxGoal !== null) params.append('maxGoal', filters.maxGoal.toString())
-      if (filters.minPercent !== null) params.append('minPercent', filters.minPercent.toString())
-      if (filters.staffPick !== null) params.append('staffPick', filters.staffPick.toString())
-      if (filters.outreachStatus) params.append('outreachStatus', filters.outreachStatus)
-      if (filters.hasInstagram) params.append('hasInstagram', 'true')
-      if (filters.hasFacebook) params.append('hasFacebook', 'true')
-      if (filters.hasTwitter) params.append('hasTwitter', 'true')
-      if (filters.hasYoutube) params.append('hasYoutube', 'true')
-      if (filters.hasTiktok) params.append('hasTiktok', 'true')
-      if (filters.hasLinkedin) params.append('hasLinkedin', 'true')
-      if (filters.hasPatreon) params.append('hasPatreon', 'true')
-      if (filters.hasDiscord) params.append('hasDiscord', 'true')
-      if (filters.hasTwitch) params.append('hasTwitch', 'true')
-      if (filters.hasBluesky) params.append('hasBluesky', 'true')
-      if (filters.hasOtherWebsite) params.append('hasOtherWebsite', 'true')
+      const params = buildProjectsParams(999999, 0, false, filters)
 
       const response = await fetch(`/api/projects?${params.toString()}`)
 

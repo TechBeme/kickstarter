@@ -13,7 +13,10 @@ export async function GET() {
         // The function returns a TABLE, so data is an array with one row
         const metadata = data?.[0] || { countries: [], categories: [] }
 
-        return NextResponse.json(metadata)
+        const response = NextResponse.json(metadata)
+        response.headers.set('Cache-Control', 'public, s-maxage=600, stale-while-revalidate=86400')
+
+        return response
     } catch (error) {
         console.error('API error:', error)
         return NextResponse.json(

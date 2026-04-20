@@ -6,6 +6,7 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const limit = parseInt(searchParams.get('limit') || '50')
         const offset = parseInt(searchParams.get('offset') || '0')
+        const includeTotal = searchParams.get('includeTotal') !== 'false'
         const search = searchParams.get('search') || null
         const state = searchParams.get('state') || null
         const country = searchParams.get('country') || null
@@ -16,7 +17,7 @@ export async function GET(request: NextRequest) {
         const staffPick = searchParams.get('staffPick') ? searchParams.get('staffPick') === 'true' : null
         const outreachStatus = searchParams.get('outreachStatus') || null
 
-        const { data, error } = await (supabaseServer as any).rpc('search_projects', {
+        const rpcPayload = {
             p_search: search,
             p_state: state,
             p_country: country,
@@ -38,21 +39,50 @@ export async function GET(request: NextRequest) {
             p_has_bluesky: searchParams.get('hasBluesky') === 'true',
             p_has_other_website: searchParams.get('hasOtherWebsite') === 'true',
             p_limit: limit,
-            p_offset: offset
-        })
+            p_offset: offset,
+            p_include_total: includeTotal
+        }
+
+        let { data, error } = await (supabaseServer as any).rpc('search_projects', rpcPayload)
+
+        // Backward compatibility: older DB function signatures do not support p_include_total.
+        const shouldRetryLegacy = Boolean(
+            error && (
+                error?.message?.includes('p_include_total') ||
+                error?.message?.includes('search_projects') ||
+                error?.code === 'PGRST202'
+            )
+        )
+
+        if (shouldRetryLegacy) {
+            const { p_include_total, ...legacyPayload } = rpcPayload
+                ; ({ data, error } = await (supabaseServer as any).rpc('search_projects', {
+                    ...legacyPayload
+                }))
+        }
 
         if (error) {
             console.error('Database error:', error)
             return NextResponse.json({ error: error.message }, { status: 500 })
         }
 
-        // Extract total_count from first row
-        const total_count = data && data.length > 0 ? data[0].total_count : 0
+        const total_count = includeTotal && data && data.length > 0
+            ? data[0].total_count
+            : null
 
-        return NextResponse.json({
+        const response = NextResponse.json({
             data: data || [],
             total_count: total_count
         })
+
+        response.headers.set(
+            'Cache-Control',
+            includeTotal
+                ? 'public, s-maxage=20, stale-while-revalidate=120'
+                : 'public, s-maxage=60, stale-while-revalidate=300'
+        )
+
+        return response
     } catch (error) {
         console.error('API error:', error)
         return NextResponse.json(

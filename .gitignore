@@ -55,3 +55,5 @@ Thumbs.db
 /website/.next/
 /website/node_modules/
 /website/out/
+.vercel
+.env*.local

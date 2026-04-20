@@ -157,6 +157,9 @@ CREATE TABLE IF NOT EXISTS projects (
 -- Indexes for query optimization
 -- =====================================================
 
+-- Extension required for fast ILIKE '%term%' searches
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
 -- Unique index on slug
 CREATE UNIQUE INDEX IF NOT EXISTS idx_projects_slug 
 ON projects(slug);
@@ -209,6 +212,25 @@ ON projects USING GIN (category);
 -- Index for sorting by creation date
 CREATE INDEX IF NOT EXISTS idx_projects_created_at 
 ON projects(created_at DESC);
+
+-- Index used by search_projects ORDER BY
+CREATE INDEX IF NOT EXISTS idx_projects_created_at_ks 
+ON projects(created_at_ks DESC);
+
+-- Expression index for category filter (category->>'name' = ...)
+CREATE INDEX IF NOT EXISTS idx_projects_category_name
+ON projects((category->>'name'));
+
+-- Expression index for country filter with COALESCE logic
+CREATE INDEX IF NOT EXISTS idx_projects_country_displayable
+ON projects((COALESCE(location->>'expanded_country', country_displayable_name, country)));
+
+-- Trigram indexes for partial text search on project name/blurb
+CREATE INDEX IF NOT EXISTS idx_projects_name_trgm
+ON projects USING GIN (name gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS idx_projects_blurb_trgm
+ON projects USING GIN (blurb gin_trgm_ops);
 
 -- Partial index for successful projects
 CREATE INDEX IF NOT EXISTS idx_projects_successful 
