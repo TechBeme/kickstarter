@@ -260,12 +260,6 @@ Este projeto é **independente** e **NÃO é afiliado ao Kickstarter**. É uma f
 
 ---
 
-## 🙏 Agradecimentos
-
-Construído com [Next.js](https://nextjs.org/), [Supabase](https://supabase.com/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Firecrawl](https://firecrawl.dev/) e outras tecnologias open-source incríveis.
-
----
-
 <div align="center">
 
 **Desenvolvido por [Rafael Vieira](https://github.com/TechBeme)**
