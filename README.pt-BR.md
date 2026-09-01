@@ -27,7 +27,6 @@
 ## 📋 Sumário
 
 - [Visão Geral](#-visão-geral)
-- [Sobre o Desenvolvedor](#-sobre-o-desenvolvedor)
 - [Principais Recursos](#-principais-recursos)
 - [O Que Você Recebe](#-o-que-você-recebe)
 - [Stack Tecnológica](#%EF%B8%8F-stack-tecnológica)
@@ -50,42 +49,6 @@ A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema prof
 - Exportações profissionais para Excel
 - Interface web moderna com Next.js
 - Workflows automatizados com GitHub Actions
-
----
-
-## 👨‍💻 Sobre o Desenvolvedor
-
-<div align="center">
-
-**Desenvolvido por Rafael Vieira (TechBeme)**
-
-[![GitHub](https://img.shields.io/badge/GitHub-TechBeme-181717?logo=github)](https://github.com/TechBeme)
-[![Fiverr](https://img.shields.io/badge/Fiverr-Tech__Be-1DBF73?logo=fiverr)](https://www.fiverr.com/tech_be)
-[![Upwork](https://img.shields.io/badge/Upwork-Profile-14a800?logo=upwork)](https://www.upwork.com/freelancers/~01f0abcf70bbd95376)
-[![Email](https://img.shields.io/badge/Email-contato@techbe.me-EA4335?logo=gmail)](mailto:contato@techbe.me)
-
-**Desenvolvedor Full-Stack & Especialista em Automação com IA**
-
-Especializado em **web scraping**, **sistemas de automação**, **aplicações web modernas** e **integrações de IA**.
-
-### 💼 Principais Especialidades
-
-- 🔍 Web Scraping & Extração de Dados
-- ⚡ Automação de Processos & Workflows
-- 💻 Desenvolvimento Full-Stack (Next.js, React, Python, TypeScript)
-- 🤖 Integrações de IA (OpenAI, Anthropic, sistemas RAG)
-- 📊 Design & Otimização de Bancos de Dados
-- 🎨 Desenvolvimento de UI/UX Moderno
-
-### 🌍 Idiomas
-
-🇺🇸 **Inglês** • 🇧🇷 **Português** • 🇪🇸 **Espanhol**
-
-### 📬 Contato
-
-**Email**: [contato@techbe.me](mailto:contato@techbe.me)
-
-</div>
 
 ---
 
