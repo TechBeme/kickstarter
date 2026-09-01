@@ -27,7 +27,6 @@
 ## 📋 Tabla de Contenidos
 
 - [Descripción General](#-descripción-general)
-- [Sobre el Desarrollador](#-sobre-el-desarrollador)
 - [Características Principales](#-características-principales)
 - [Lo Que Obtienes](#-lo-que-obtienes)
 - [Stack Tecnológico](#%EF%B8%8F-stack-tecnológico)
@@ -48,44 +47,8 @@ La **Plataforma de Inteligencia de Creadores de Kickstarter** es un sistema prof
 - Extracción de perfiles de redes sociales (más de 10 plataformas)
 - Filtrado y búsqueda avanzados
 - Exportaciones profesionales a Excel
-- Interfaz web moderna con Next.js
+- Interfaz web responsiva construida con Next.js
 - Flujos de trabajo automatizados con GitHub Actions
-
----
-
-## 👨‍💻 Sobre el Desarrollador
-
-<div align="center">
-
-**Desarrollado por Rafael Vieira (TechBeme)**
-
-[![GitHub](https://img.shields.io/badge/GitHub-TechBeme-181717?logo=github)](https://github.com/TechBeme)
-[![Fiverr](https://img.shields.io/badge/Fiverr-Tech__Be-1DBF73?logo=fiverr)](https://www.fiverr.com/tech_be)
-[![Upwork](https://img.shields.io/badge/Upwork-Profile-14a800?logo=upwork)](https://www.upwork.com/freelancers/~01f0abcf70bbd95376)
-[![Email](https://img.shields.io/badge/Email-contacto@techbe.me-EA4335?logo=gmail)](mailto:contacto@techbe.me)
-
-**Desarrollador Full-Stack y Especialista en Automatización con IA**
-
-Especializado en **web scraping**, **sistemas de automatización**, **aplicaciones web modernas** e **integraciones de IA**.
-
-### 💼 Principales Especialidades
-
-- 🔍 Web Scraping y Extracción de Datos
-- ⚡ Automatización de Procesos y Flujos de Trabajo
-- 💻 Desarrollo Full-Stack (Next.js, React, Python, TypeScript)
-- 🤖 Integraciones de IA (OpenAI, Anthropic, sistemas RAG)
-- 📊 Diseño y Optimización de Bases de Datos
-- 🎨 Desarrollo de UI/UX Moderno
-
-### 🌍 Idiomas
-
-🇺🇸 **Inglés** • 🇧🇷 **Português** • 🇪🇸 **Español**
-
-### 📬 Contacto
-
-**Email**: [contacto@techbe.me](mailto:contacto@techbe.me)
-
-</div>
 
 ---
 
@@ -98,7 +61,7 @@ Especializado en **web scraping**, **sistemas de automatización**, **aplicacion
 - **Actualizaciones Automáticas**: GitHub Actions se ejecuta cada hora
 
 ### Extracción de Contactos con IA
-- Descubrimiento inteligente de correos electrónicos y formularios de contacto usando Firecrawl
+- Descubrimiento de correos y formularios de contacto usando Firecrawl
 - Rotación automática de múltiples cuentas de API
 - Procesamiento paralelo (más de 100 workers simultáneos)
 - Lista de bloqueo de dominios fallidos
@@ -117,7 +80,7 @@ Especializado en **web scraping**, **sistemas de automatización**, **aplicacion
 ### 1. Exportación Excel (`creators_export.xlsx`)
 - Una fila por creador con todos los proyectos
 - 22 columnas: info del creador, proyectos, ubicación, categorías, más de 10 URLs de redes sociales
-- ~8,000 creadores con datos completos
+- ~8,000 registros de creadores con campos de campaña y contacto
 - Formato profesional
 
 ### 2. Base de Datos PostgreSQL (Supabase)
@@ -128,7 +91,7 @@ Especializado en **web scraping**, **sistemas de automatización**, **aplicacion
 - `firecrawl_blocked_domains`: Lista de bloqueo compartida
 - `pipeline_state`: Rastrea última ejecución de extracción
 
-### 3. Aplicación Web Moderna
+### 3. Aplicación Web
 - Next.js 16 con TypeScript
 - Server Components para rendimiento
 - Tailwind CSS + shadcn/ui
@@ -166,7 +129,7 @@ Especializado en **web scraping**, **sistemas de automatización**, **aplicacion
 | **shadcn/ui** | Más reciente | Componentes React de alta calidad |
 | **Radix UI** | Más reciente | Componentes accesibles sin estilo |
 | **Lucide React** | Más reciente | Biblioteca de iconos hermosa |
-| **TanStack Table** | 8.21+ | Componente de tabla poderoso |
+| **TanStack Table** | 8.21+ | Ordenación, filtros y paginación de tablas |
 | **Recharts** | 3.3+ | Biblioteca de gráficos |
 | **xlsx** | 0.18+ | Exportación Excel del lado del cliente |
 | **Zustand** | 5.0+ | Gestión de estado ligera |
@@ -205,7 +168,7 @@ pip install -r requirements.txt
 # Solo Excel (sin base de datos)
 python run.py --skip-supabase --skip-contacts
 
-# Pipeline completo (requiere configuración de Supabase)
+# Ejecutar recolección, enriquecimiento y exportación (requiere configuración de Supabase)
 python run.py
 ```
 
@@ -240,7 +203,7 @@ SUPABASE_KEY=your-service-role-key
 ### Comandos Comunes
 
 ```bash
-# Pipeline completo
+# Ejecutar recolección, enriquecimiento y exportación
 python run.py
 
 # Solo Excel
@@ -294,12 +257,6 @@ Este proyecto es **independiente** y **NO está afiliado a Kickstarter**. Es una
 - Rate limiting incorporado
 - Recopila solo datos públicamente disponibles
 - Los usuarios son responsables del cumplimiento de las leyes aplicables
-
----
-
-## 🙏 Agradecimientos
-
-Construido con [Next.js](https://nextjs.org/), [Supabase](https://supabase.com/), [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/), [Firecrawl](https://firecrawl.dev/) y otras increíbles tecnologías de código abierto.
 
 ---
 

@@ -2,7 +2,7 @@
 
 # 🚀 Kickstarter Creator Intelligence Platform
 
-**Professional data collection, enrichment, and analytics platform for 8,000+ Kickstarter creators**
+**Data collection, contact enrichment, filtering, and Excel export for 8,000+ Kickstarter creators**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -39,15 +39,15 @@
 
 ## 🎯 Overview
 
-The **Kickstarter Creator Intelligence Platform** is a professional system that automatically collects, enriches, and analyzes data from 8,000+ upcoming Kickstarter campaigns. It provides actionable intelligence for partnership opportunities, market research, and outreach campaigns.
+The **Kickstarter Creator Intelligence Platform** collects data from 8,000+ upcoming Kickstarter campaigns, uses Firecrawl to find public contact details, stores the results in Supabase, and exposes filters and Excel exports for research and outreach.
 
 **Key capabilities:**
 - Automated data collection from Kickstarter
 - AI-powered contact extraction (emails and forms)
 - Social media profile extraction (10+ platforms)
-- Advanced filtering and search
-- Professional Excel exports
-- Modern web interface with Next.js
+- Search and filters by campaign and creator fields
+- Excel exports with separate worksheets and formatted columns
+- Responsive Next.js interface
 - Automated workflows with GitHub Actions
 
 ---
@@ -61,13 +61,13 @@ The **Kickstarter Creator Intelligence Platform** is a professional system that 
 - **Automated Updates**: GitHub Actions runs hourly
 
 ### AI-Powered Contact Extraction
-- Intelligent email and contact form discovery using Firecrawl
+- Email and contact-form discovery using Firecrawl
 - Multi-account API key rotation
 - Parallel processing (100+ concurrent workers)
 - Domain blocklist for failed sites
 
 ### Web Interface
-- Advanced search and filtering
+- Search, sorting, and field-based filters
 - Creator and project dashboards
 - Outreach management (status tracking, notes, tags)
 - Excel export functionality
@@ -80,8 +80,8 @@ The **Kickstarter Creator Intelligence Platform** is a professional system that 
 ### 1. Excel Export (`creators_export.xlsx`)
 - One row per creator with all projects
 - 22 columns: creator info, projects, location, categories, 10+ social media URLs
-- ~8,000 creators with complete data
-- Professional formatting
+- ~8,000 creator records with campaign and contact fields
+- Formatted worksheets and column widths
 
 ### 2. PostgreSQL Database (Supabase)
 - `creators`: Profiles, avatars, websites, social media
@@ -91,7 +91,7 @@ The **Kickstarter Creator Intelligence Platform** is a professional system that 
 - `firecrawl_blocked_domains`: Shared blocklist
 - `pipeline_state`: Tracks last extraction run
 
-### 3. Modern Web Application
+### 3. Web Application
 - Next.js 16 with TypeScript
 - Server Components for performance
 - Tailwind CSS + shadcn/ui
@@ -126,10 +126,10 @@ The **Kickstarter Creator Intelligence Platform** is a professional system that 
 | ![TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&logoColor=white) | 5.0+ | Type-safe development |
 | ![React](https://img.shields.io/badge/-React-61DAFB?logo=react&logoColor=black) | 19.2+ | UI library |
 | ![Tailwind CSS](https://img.shields.io/badge/-Tailwind-38B2AC?logo=tailwind-css&logoColor=white) | 4.0+ | Utility-first CSS framework |
-| **shadcn/ui** | Latest | High-quality React components |
+| **shadcn/ui** | Latest | React component collection |
 | **Radix UI** | Latest | Unstyled accessible components |
-| **Lucide React** | Latest | Beautiful icon library |
-| **TanStack Table** | 8.21+ | Powerful table component |
+| **Lucide React** | Latest | SVG icon library |
+| **TanStack Table** | 8.21+ | Table sorting, filtering, and pagination |
 | **Recharts** | 3.3+ | Chart library |
 | **xlsx** | 0.18+ | Client-side Excel export |
 | **Zustand** | 5.0+ | Lightweight state management |

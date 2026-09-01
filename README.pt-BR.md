@@ -2,7 +2,7 @@
 
 # 🚀 Plataforma de Inteligência de Criadores do Kickstarter
 
-**Plataforma profissional de coleta, enriquecimento e análise de dados de mais de 8.000 criadores do Kickstarter**
+**Coleta de dados, enriquecimento de contatos, filtros e exportação para Excel de mais de 8.000 criadores do Kickstarter**
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -39,15 +39,15 @@
 
 ## 🎯 Visão Geral
 
-A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema profissional que coleta, enriquece e analisa automaticamente dados de mais de 8.000 campanhas futuras do Kickstarter. Fornece inteligência acionável para oportunidades de parceria, pesquisa de mercado e campanhas de divulgação.
+A **Plataforma de Inteligência de Criadores do Kickstarter** coleta dados de mais de 8.000 campanhas futuras, usa Firecrawl para localizar contatos públicos, armazena os resultados no Supabase e oferece filtros e exportações para Excel.
 
 **Principais capacidades:**
 - Coleta automatizada de dados do Kickstarter
 - Extração de contatos com IA (e-mails e formulários)
 - Extração de perfis de redes sociais (mais de 10 plataformas)
-- Filtragem e busca avançadas
+- Busca e filtros por campos da campanha e do criador
 - Exportações profissionais para Excel
-- Interface web moderna com Next.js
+- Interface web responsiva construída com Next.js
 - Workflows automatizados com GitHub Actions
 
 ---
@@ -61,13 +61,13 @@ A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema prof
 - **Atualizações Automáticas**: GitHub Actions executa a cada hora
 
 ### Extração de Contatos com IA
-- Descoberta inteligente de e-mails e formulários de contato usando Firecrawl
+- Descoberta de e-mails e formulários de contato usando Firecrawl
 - Rotação automática de múltiplas contas de API
 - Processamento paralelo (mais de 100 workers simultâneos)
 - Lista de bloqueio de domínios com falha
 
 ### Interface Web
-- Busca e filtragem avançadas
+- Busca, ordenação e filtros por campo
 - Dashboards de criadores e projetos
 - Gestão de divulgação (rastreamento de status, notas, tags)
 - Funcionalidade de exportação para Excel
@@ -80,8 +80,8 @@ A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema prof
 ### 1. Exportação Excel (`creators_export.xlsx`)
 - Uma linha por criador com todos os projetos
 - 22 colunas: info do criador, projetos, localização, categorias, mais de 10 URLs de redes sociais
-- ~8.000 criadores com dados completos
-- Formatação profissional
+- ~8.000 registros de criadores com campos de campanha e contato
+- Planilhas com colunas formatadas e larguras ajustadas
 
 ### 2. Banco de Dados PostgreSQL (Supabase)
 - `creators`: Perfis, avatares, websites, redes sociais
@@ -91,7 +91,7 @@ A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema prof
 - `firecrawl_blocked_domains`: Lista de bloqueio compartilhada
 - `pipeline_state`: Rastreia última execução de extração
 
-### 3. Aplicação Web Moderna
+### 3. Aplicação Web
 - Next.js 16 com TypeScript
 - Server Components para performance
 - Tailwind CSS + shadcn/ui
@@ -128,8 +128,8 @@ A **Plataforma de Inteligência de Criadores do Kickstarter** é um sistema prof
 | ![Tailwind CSS](https://img.shields.io/badge/-Tailwind-38B2AC?logo=tailwind-css&logoColor=white) | 4.0+ | Framework CSS utility-first |
 | **shadcn/ui** | Mais recente | Componentes React de alta qualidade |
 | **Radix UI** | Mais recente | Componentes acessíveis sem estilo |
-| **Lucide React** | Mais recente | Biblioteca de ícones bonita |
-| **TanStack Table** | 8.21+ | Componente de tabela poderoso |
+| **Lucide React** | Mais recente | Biblioteca de ícones SVG |
+| **TanStack Table** | 8.21+ | Ordenação, filtros e paginação de tabelas |
 | **Recharts** | 3.3+ | Biblioteca de gráficos |
 | **xlsx** | 0.18+ | Exportação Excel no cliente |
 | **Zustand** | 5.0+ | Gestão de estado leve |
@@ -168,7 +168,7 @@ pip install -r requirements.txt
 # Apenas Excel (sem banco de dados)
 python run.py --skip-supabase --skip-contacts
 
-# Pipeline completo (requer configuração do Supabase)
+# Executar coleta, enriquecimento e exportação (requer configuração do Supabase)
 python run.py
 ```
 
@@ -203,7 +203,7 @@ SUPABASE_KEY=your-service-role-key
 ### Comandos Comuns
 
 ```bash
-# Pipeline completo
+# Executar coleta, enriquecimento e exportação
 python run.py
 
 # Apenas Excel
